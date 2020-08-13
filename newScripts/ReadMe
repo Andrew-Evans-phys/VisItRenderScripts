@@ -1,0 +1,99 @@
+Author: Andrew M Evans 
+Email: evansa@sonoma.edu or andrew.m.evans1989@gmail.com (sonoma prefered)
+
+This ReadMe details all scripts in this folders setup, functions, and known bugs.
+
+Setup:
+Make sure /usr/local/VisIt/bin/ is in the path, this can be checked with the
+code showpath.sh
+These scripts run in python2.7 (curse the VisIt devs) 
+
+edit the rconfig.input and domainchangeconfig.input files to have the initial
+conditions you would like.
+
+-Format of rconfig.input-
+path to VisIt site-packages
+path to data 
+name of images produced 
+save location of images
+variable 
+min var
+max var
+min thresh
+max thresh 
+
+see VisIt mannual for more info on var and thresh 
+
+-Format of domainchangeconfig.input-
+file being changed
+export location 
+
+For use of gifmaker.py use command:
+python2.7 -m pip install PIL
+
+Function:
+
+-RenderLoad.py-
+Runs all scripts in the correct order and allows for automation of all scripts.
+userIn - sets initial input for automation, can be ignored if not automating 
+auto - toggles menu of RenderLoad.py off if set to True
+autoRender - makes menus inside other scripts automatic if set to True 
+
+-RenderCD.py-
+Renders data that has had the changing domain cut into small pieces 
+Visitoff() - Kills the PID for visit as a memory leak failsafe 
+(The visit devs did not do a good job of preventing this situation)
+main(auto) - Runs visit with settings specified by rconfig.input, auto allows
+for the skipping of the rconfig.input setup process 
+
+-RenderSd.py- 
+Renders data that has a static domain. Does not cause memory leaks ever.
+smain(auto) - Same as main(), but for RenderCD.py
+No need for Visitoff(), because this method of saving does not cause 
+memory leaks 
+
+-Domainchange.py-
+Cuts .visit files with changing domains into FVD#.visit files with constant 
+domains.
+Active() - This function runs the whole code, this was done so that 
+Domainchange.py could just be run as a function inside RenderLoad.py 
+
+-gifmaker.py-
+Creates .gif files from the images generated from the VisIt render process
+useri - y/n for .gif creation, default to y (str)
+total - sets duration (int) 
+name - sets name (str)
+gifCreate(useri, total, name) - creates .gif with provided info
+
+-ModuleLoad.py-
+Automatically loads the visit module for the user. Wheeler specifc.
+loadv() - loads visit module to Wheeler 
+unload() - unloads visit module from Wheeler
+ 
+-showpath.sh-
+Lists out what is in your path. Helpful for checking if visit is in the 
+path.
+
+-visitlog.py- 
+VisIt's automatically generated data cache for renders. Useful for 
+debugging and learning the VisIt commands. Why can't you use the VisIt 
+documentation? Because a lot of it is very outdated...
+
+Bugs:
+if initial unchanged .visit file is left in the folder with FVD#.visit files 
+VisIt will throw a render error when it attempts to render it. The solution 
+is to move the .visit file to another folder after the domain change.
+(this could be automated in the future)
+
+VisIt's current install on Wheeler doesn't render anything due to some files 
+missing. This is by far and away the largest error, because this code
+currently doesn't do anything. This is being fixed.
+
+Image folder doesn't get created and no images are rendered. This is most 
+likely tied to the bug mentioned above; However, this can't be confirmed 
+or denied until the VisIt install is corrected and and the scripts ran
+again.
+
+----------------------------------------------------------------------------
+If any new bugs are discovered please add them here and contant me.
+----------------------------------------------------------------------------
